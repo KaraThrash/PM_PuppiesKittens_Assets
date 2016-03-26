@@ -14,9 +14,11 @@ public class Clickable : MonoBehaviour {
     public int hotLimit;
     public int happyStat;
     public int currentHappiness;
+    private Rigidbody rb;
     // Use this for initialization
     void Start () {
 	held = false;
+        rb = GetComponent<Rigidbody>();
         happinessTracker = GameObject.Find("HappinessTracker");
         mouseCursor = GameObject.Find("MouseControl");
 	}
@@ -24,7 +26,9 @@ public class Clickable : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (Input.GetMouseButtonUp(0))
-        { held = false; }
+        { held = false;
+            rb.useGravity = true;
+        }
         if (held == true)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -49,12 +53,15 @@ public class Clickable : MonoBehaviour {
     public void OnMouseDown()
     {
             if (Input.GetMouseButtonDown(0))
-            { held = true; }
+            { held = true;
+            rb.useGravity = false;
+        }
             
         else
         {
             held = false;
             petting = true;
+            
         }
         
     }
