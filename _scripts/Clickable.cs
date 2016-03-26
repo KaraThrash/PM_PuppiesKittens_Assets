@@ -56,8 +56,8 @@ public class Clickable : MonoBehaviour {
             { held = true;
             rb.useGravity = false;
         }
-            
-        else
+
+        if (Input.GetMouseButtonDown(1))
         {
             held = false;
             petting = true;
