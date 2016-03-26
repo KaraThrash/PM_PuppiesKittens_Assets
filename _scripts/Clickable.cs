@@ -3,16 +3,21 @@ using System.Collections;
 
 public class Clickable : MonoBehaviour {
     public bool held;
-    public float delay;
-    bool one_click = false;
-    bool timer_running;
-    public float time_for_double_click;
+    public bool petting;
+    public int wetOpinion;
+    public int hotOpinion;
     public GameObject mouseCursor;
+    public GameObject happinessTracker;
     public int wetStat;
     public int hotStat;
+    public int wetLimit;
+    public int hotLimit;
+    public int happyStat;
+    public int currentHappiness;
     // Use this for initialization
     void Start () {
 	held = false;
+        happinessTracker = GameObject.Find("HappinessTracker");
         mouseCursor = GameObject.Find("MouseControl");
 	}
 	
@@ -43,36 +48,35 @@ public class Clickable : MonoBehaviour {
 	}
     public void OnMouseDown()
     {
-        if (one_click)
-        {
             if (Input.GetMouseButtonDown(0))
             { held = true; }
-            if ((Time.time - time_for_double_click) > delay)
-            {
-
-                one_click = false;
-
-            }
-            //else { held = true; }
-        }
-        if (!one_click)
-        {
-            one_click = true;
-
-            time_for_double_click = Time.time;
-                                              
-        }
+            
         else
         {
-            one_click = false; // found a double click, now reset
+            held = false;
+            petting = true;
         }
         
     }
     public void OnTriggerEnter(Collider col)
     { if (col.gameObject.tag == "Wet")
-            { wetStat += col.gameObject.GetComponent<Zone>().wet; }
+            { wetStat += col.gameObject.GetComponent<Zone>().wet;
+            if (wetStat >= wetLimit)
+            { happyStat -= wetOpinion; }
+        }
     
     if (col.gameObject.tag == "Hot")
-            { hotStat += col.gameObject.GetComponent<Zone>().hot; }
+            { hotStat += col.gameObject.GetComponent<Zone>().hot;
+            if (hotStat >= hotLimit)
+            { happyStat-= hotOpinion; }
+        }
+        
+        
+        ChangeHappiness((happyStat - currentHappiness));
+        currentHappiness = happyStat;
                 }
+    public void ChangeHappiness(int happy)
+    {
+        happinessTracker.GetComponent<HappinessTracker>().happiness += happy;
+    }
 }
