@@ -8,6 +8,8 @@ public class Clickable : MonoBehaviour {
     bool timer_running;
     public float time_for_double_click;
     public GameObject mouseCursor;
+    public int wetStat;
+    public int hotStat;
     // Use this for initialization
     void Start () {
 	held = false;
@@ -66,4 +68,11 @@ public class Clickable : MonoBehaviour {
         }
         
     }
+    public void OnTriggerEnter(Collider col)
+    { if (col.gameObject.tag == "Wet")
+            { wetStat += col.gameObject.GetComponent<Zone>().wet; }
+    
+    if (col.gameObject.tag == "Hot")
+            { hotStat += col.gameObject.GetComponent<Zone>().hot; }
+                }
 }
