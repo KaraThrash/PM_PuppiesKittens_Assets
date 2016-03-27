@@ -19,26 +19,29 @@ public class Clickable : MonoBehaviour {
     private Rigidbody rb;
     public float throwForce;
     public AudioClip meow;
-    public AudioClip meow2;
+    public AudioClip meowPickUp;
     public AudioClip meowHappy;
     public AudioClip meowSad;
     public AudioClip meowBump;
     public AudioSource audio;
     // Use this for initialization
     void Start () {
+        StartCoroutine(Starting(0.5f));
         audio = GetComponent<AudioSource>();
         held = false;
         rb = GetComponent<Rigidbody>();
         happinessTracker = GameObject.Find("HappinessTracker");
         mouseCursor = GameObject.Find("MouseControl");
         wayPoint = GameObject.Find("WayPoint");
-        happinessTracker.GetComponent<HappinessTracker>().happyTarget += Random.Range(0, 4);
+       // happinessTracker.GetComponent<HappinessTracker>().happyTarget += Random.Range(0, 4);
         currentHappiness = happyStat;
+       
     }
 	
 	// Update is called once per frame
 	void Update () {
-        
+        happinessTracker = GameObject.Find("HappinessTracker");
+        audio = GetComponent<AudioSource>();
         if (held == true)
         {
             
@@ -62,29 +65,49 @@ public class Clickable : MonoBehaviour {
             //transform.position = Input.mousePosition; 
         }
     }
+    
     public void OnMouseUp()
     {
         
         if (held == true)
         {
             held = false;
-            audio.clip = meow2;
-            audio.Play();
+            
             rb.AddForce((wayPoint.transform.position- transform.position) *throwForce* 100);
             rb.useGravity = true;
         }
         
     }
-    
+    IEnumerator Starting(float waitTime)
+    {
+        yield return new WaitForSeconds(2.0f);
+        audio = GetComponent<AudioSource>();
+        held = false;
+        rb = GetComponent<Rigidbody>();
+        happinessTracker = GameObject.Find("HappinessTracker");
+        mouseCursor = GameObject.Find("MouseControl");
+        wayPoint = GameObject.Find("WayPoint");
+        happinessTracker.GetComponent<HappinessTracker>().happyTarget += Random.Range(0, 4);
+        currentHappiness = happyStat;
+    }
     public void OnMouseDown()
     {
-        audio.clip = meow;
+        audio.clip = meowPickUp;
         audio.Play();
+    }
+    public void OnCollisionEnter(Collision crash)
+    {
+        
+        if (crash.gameObject.tag == "Cat")
+        {
+            audio.clip = meowBump;
+            audio.Play();
+        }
     }
 public void OnMouseDrag()
     {
        
-        print("mousedown");
+        
             if (Input.GetMouseButton(0))
             { held = true;
             rb.useGravity = false;
@@ -121,12 +144,12 @@ public void OnMouseDrag()
         
         
         ChangeHappiness((happyStat - currentHappiness));
-        if (currentHappiness > happyStat)
+        if (happyStat < currentHappiness)
         {
             audio.clip = meowHappy;
             audio.Play();
         }
-        if (currentHappiness < happyStat)
+        if (happyStat < currentHappiness)
         {
             audio.clip = meowSad;
             audio.Play();
@@ -156,12 +179,12 @@ public void OnMouseDrag()
             { happyStat -= (hotOpinion * col2.gameObject.GetComponent<Zone>().hot); 
         }
 
-        if (currentHappiness > happyStat)
+        if ( happyStat> currentHappiness )
         {
             audio.clip = meowHappy;
             audio.Play();
         }
-        if (currentHappiness < happyStat)
+        if (happyStat < currentHappiness)
         {
             audio.clip = meowSad;
             audio.Play();
