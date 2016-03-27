@@ -8,8 +8,12 @@ public class HappinessTracker : MonoBehaviour {
     public Text happyScore;
     public int happyTarget;
     public bool displayScore;
-	// Use this for initialization
-	void Start () {
+    public GameObject winText;
+    public GameObject loseText;
+    // Use this for initialization
+    void Start () {
+        winText.active = false;
+        loseText.active = false;
         StartCoroutine(KeepScore(1.0f));
     }
 	
@@ -17,9 +21,21 @@ public class HappinessTracker : MonoBehaviour {
 	void Update () {
         if (displayScore == true)
         {
-            happyScore.text = happiness.ToString();
+            happyScore.text = (happyTarget - happiness).ToString();
+            if (happiness >= happyTarget)
+            {
+                StartCoroutine(YouWin(1.0f));
+            }
         }
+       
 	}
+    IEnumerator YouWin(float waitTime)
+    {
+        winText.active = true;
+        yield return new WaitForSeconds(1.0f);
+        
+        displayScore = true;
+    }
     IEnumerator KeepScore(float waitTime)
     {
         yield return new WaitForSeconds(1.0f);

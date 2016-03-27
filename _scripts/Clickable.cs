@@ -20,6 +20,9 @@ public class Clickable : MonoBehaviour {
     public float throwForce;
     public AudioClip meow;
     public AudioClip meow2;
+    public AudioClip meowHappy;
+    public AudioClip meowSad;
+    public AudioClip meowBump;
     public AudioSource audio;
     // Use this for initialization
     void Start () {
@@ -29,6 +32,8 @@ public class Clickable : MonoBehaviour {
         happinessTracker = GameObject.Find("HappinessTracker");
         mouseCursor = GameObject.Find("MouseControl");
         wayPoint = GameObject.Find("WayPoint");
+        happinessTracker.GetComponent<HappinessTracker>().happyTarget += Random.Range(0, 4);
+        currentHappiness = happyStat;
     }
 	
 	// Update is called once per frame
@@ -116,6 +121,16 @@ public void OnMouseDrag()
         
         
         ChangeHappiness((happyStat - currentHappiness));
+        if (currentHappiness > happyStat)
+        {
+            audio.clip = meowHappy;
+            audio.Play();
+        }
+        if (currentHappiness < happyStat)
+        {
+            audio.clip = meowSad;
+            audio.Play();
+        }
         currentHappiness = happyStat;
                 }
     public void OnTriggerExit(Collider col2)
@@ -141,7 +156,16 @@ public void OnMouseDrag()
             { happyStat -= (hotOpinion * col2.gameObject.GetComponent<Zone>().hot); 
         }
 
-
+        if (currentHappiness > happyStat)
+        {
+            audio.clip = meowHappy;
+            audio.Play();
+        }
+        if (currentHappiness < happyStat)
+        {
+            audio.clip = meowSad;
+            audio.Play();
+        }
         ChangeHappiness((happyStat - currentHappiness));
         currentHappiness = happyStat;
     }

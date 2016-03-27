@@ -3,10 +3,11 @@ using System.Collections;
 
 public class Enviroment : MonoBehaviour {
     public bool held;
-    public float clickSpot;
+    public GameObject roomCenter;
+    private Vector3 startPosition;
 	// Use this for initialization
 	void Start () {
-	
+        startPosition = transform.position;
 	}
 	
 	// Update is called once per frame
@@ -14,7 +15,7 @@ public class Enviroment : MonoBehaviour {
 
         if (held == true)
         {
-            transform.position = Vector3.MoveTowards(transform.position, Input.mousePosition, Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, roomCenter.transform.position, (0.3f * Time.deltaTime));
             //transform.LookAt(Input.mousePosition);
             //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //RaycastHit hit;
@@ -30,17 +31,20 @@ public class Enviroment : MonoBehaviour {
 
             //}
         }
+        //else { transform.position = Vector3.MoveTowards(transform.position, startPosition, (0.3f *Time.deltaTime)); }
         if (Input.GetMouseButtonUp(0))
         {
             held = false;
+            
         }
     }
-    public void OnMouseDrag()
+    public void OnMouseDown()
     {
+        held = true;
 
 
-        if (held == false)
-        { held = true; }
-        else { held = false; }
+        //if (held == false)
+        //{ held = true; }
+        //else { held = false; }
     }
 }
