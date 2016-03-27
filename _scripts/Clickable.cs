@@ -4,6 +4,7 @@ using System.Collections;
 public class Clickable : MonoBehaviour {
     public bool held;
     public bool petting;
+    public GameObject wayPoint;
     public int wetOpinion;
     public int hotOpinion;
     public GameObject mouseCursor;
@@ -15,48 +16,62 @@ public class Clickable : MonoBehaviour {
     public int happyStat;
     public int currentHappiness;
     private Rigidbody rb;
+    public float throwForce;
     // Use this for initialization
     void Start () {
 	held = false;
         rb = GetComponent<Rigidbody>();
         happinessTracker = GameObject.Find("HappinessTracker");
         mouseCursor = GameObject.Find("MouseControl");
-	}
+        wayPoint = GameObject.Find("WayPoint");
+    }
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonUp(0))
-        { held = false;
-            rb.useGravity = true;
-        }
+        
         if (held == true)
         {
+            
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
+                
                 if (hit.collider.tag == "Ground")
                 {
-
+                    wayPoint.transform.position = hit.point;
                     transform.position = Vector3.MoveTowards(transform.position,hit.point, Time.deltaTime);
                     //Instantiate( wayPoint, hit.point, Quaternion.LookRotation( hit.normal ) ); 
 
 
                 }
-
+                throwForce = Mathf.Abs(Vector3.Distance(transform.position, wayPoint.transform.position));
             }
 
             //mouseCursor.GetComponent<Mouse>().wayPoint = this.gameObject;
             //transform.position = Input.mousePosition; 
         }
-	}
-    public void OnMouseDown()
+    }
+    public void OnMouseUp()
     {
-            if (Input.GetMouseButtonDown(0))
+        
+        if (held == true)
+        {
+            held = false;
+            rb.AddForce((wayPoint.transform.position- transform.position) *throwForce* 100);
+            rb.useGravity = true;
+        }
+        
+    }
+public void OnMouseDrag()
+    {
+        print("mousedown");
+            if (Input.GetMouseButton(0))
             { held = true;
             rb.useGravity = false;
         }
-
+        if (Input.GetKey(KeyCode.Space))
+        { transform.Translate(transform.up * Time.deltaTime); }
         if (Input.GetMouseButtonDown(1))
         {
             held = false;
